@@ -1,0 +1,47 @@
+.matchTable{
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    flex-grow: 1;
+}
+
+.tableOptions{
+    display: flex;
+}
+
+.tableContainer{
+    overflow: scroll;
+}
+
+.table{
+    border-collapse: collapse;
+    width: 100%;
+}
+
+.table>tbody> tr:hover{
+    background-color: var(--grey-beige);
+}
+
+.table tr{
+    border-bottom: 1px solid var(--grey-beige);
+    text-align: left;
+}
+
+.table>tbody> tr >td.warning{
+    border: 2px solid red; 
+    color: red;
+}
+
+
+.table>thead{
+    margin-bottom: 0.5rem;
+}
+
+.table td,.table th{
+    padding: 0.5rem;
+    text-overflow: ellipsis;
+}
+
+.table td:last-child,.table th:last-child{
+    text-align: right;
+}
