@@ -1,11 +1,11 @@
 import { MatchItem, Config } from "@/types/Precios";
 
-const genCostos = ({xlsxCosto,rentabilidadPrevia,config,ivaPrevio}:{xlsxCosto:number;rentabilidadPrevia:number;config:Config,ivaPrevio:number}):Omit<MatchItem,'codigo'>=>{
+const genCostos = ({xlsxCosto,rentabilidadPrevia,config,ivaPrevio}:{xlsxCosto:number;rentabilidadPrevia:number;config:Config,ivaPrevio:number}):Omit<MatchItem,'codigo'|'descripcion'>=>{
 
     if(typeof xlsxCosto != 'number')
     xlsxCosto=0;
 
-    let {iva,ivaIncluido,modificacion,rentabilidad,modificacionAfecta} = config;
+    let {iva,ivaIncluido,modificacion,rentabilidad,modificacionAfecta,isFinal} = config;
     
     if(!iva)
     iva = ivaPrevio;
@@ -26,9 +26,18 @@ const genCostos = ({xlsxCosto,rentabilidadPrevia,config,ivaPrevio}:{xlsxCosto:nu
       rentabilidad = (rentabilidadFactor-1)*100;
     }
 
-    const costo = subCosto*modificacionFactor;
-    const precio = costo*rentabilidadFactor;
-    const final = precio*ivaFactor;
+    let costo,precio,final;
+
+    costo = subCosto*modificacionFactor;
+    precio = costo*rentabilidadFactor;
+    final = precio*ivaFactor;
+    
+    if(isFinal){
+      final = subCosto*ivaFactor;
+      precio = final/ivaFactor;
+      costo = precio/rentabilidadFactor;
+      subCosto = costo/modificacionFactor;
+    }
     
     return {subCosto:Number(subCosto.toFixed(2)),iva:Number(iva.toFixed(2)),costo:Number(costo.toFixed(2)),precio:Number(precio.toFixed(2)),rentabilidad:Number(rentabilidad.toFixed(2)),final:Number(final.toFixed(2))}
   }

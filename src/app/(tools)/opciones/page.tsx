@@ -4,10 +4,12 @@ import { ChangeEvent, useRef } from "react"
 
 const Opciones:React.FC = ()=>{
     
+    const isClient = typeof window !== 'undefined';
+    
     const opciones = useRef<Record<string,string>>({
-        cbUser:localStorage.getItem('cbUser')??'',
+        cbUser:isClient?localStorage.getItem('cbUser')??'':'',
         cbPass:'',
-        mailUser:localStorage.getItem('mailUser')??'',
+        mailUser:isClient?localStorage.getItem('mailUser')??'':'',
         mailPass:'',
     })
 
@@ -16,6 +18,7 @@ const Opciones:React.FC = ()=>{
     }
 
     const updateOpciones = ()=>{
+        if (isClient)
         Object.entries(opciones.current).forEach(([key,value])=>{
             const defaultValue = localStorage.getItem(key)??""
             localStorage.setItem(key,value??defaultValue);   
@@ -23,18 +26,22 @@ const Opciones:React.FC = ()=>{
     }
 
     return (
-        <div className="box formBox" onChange={changeHandler}>
-            <label>Contabilium</label>
-            <input name="cbUser" type="text" placeholder="usuario" defaultValue={opciones.current.cbUser}/>
-            <input name="cbPass" type="password" placeholder="password"/>
-            <label>Correo Electronico</label>
-            <input name="mailUser" type="text" placeholder="usuario" defaultValue={opciones.current.mailUser}/>
-            <input name="mailPass" type="password" placeholder="password"/>
-            <div>
-                <button onClick={updateOpciones}>aceptar</button>
+        <section className="" onChange={changeHandler}>
+            <h3>hola</h3>
+            <div className="formBox box">
+
+                <label>Contabilium</label>
+                <input name="cbUser" type="text" placeholder="usuario" defaultValue={opciones.current.cbUser}/>
+                <input name="cbPass" type="password" placeholder="password"/>
+                <label>Correo Electronico</label>
+                <input name="mailUser" type="text" placeholder="usuario" defaultValue={opciones.current.mailUser}/>
+                <input name="mailPass" type="password" placeholder="password"/>
+                <div>
+                    <button onClick={updateOpciones}>aceptar</button>
+                </div>
             </div>
             
-        </div>
+        </section>
     )
 }
 

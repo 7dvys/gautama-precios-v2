@@ -3,7 +3,7 @@ import { ChangeEvent, Dispatch, SetStateAction } from "react";
 
 type ProveedoresValues = {
     vendorValue:string;
-    discriminarValue:string;
+    discriminarValue:number;
 }
 
 interface ProveedoresProps{
@@ -21,7 +21,7 @@ const Proveedores:React.FC<ProveedoresProps> = ({proveedoresValues,setProveedore
 
     const changeDiscrimarEvent = (event:ChangeEvent<HTMLSelectElement>)=>{
         const {value} = event.target;
-        setProveedoresValues({...proveedoresValues,discriminarValue:value});
+        setProveedoresValues({...proveedoresValues,discriminarValue:Number(value)});
     }
     
     return (

@@ -1,5 +1,6 @@
 interface MatchItem{
     codigo:string;
+    descripcion:string;
     subCosto:number;
     costo:number;
     rentabilidad:number;

@@ -1,30 +1,49 @@
 import { Dispatch, SetStateAction,ChangeEvent, useRef } from "react";
 
-type TituloValues = {
-    tieneTitulo:number;
+type ColumnasValues = {
+    isFinal:number;
+    withTitulo:number
 }
 
 interface ColumnasProps{
-    tituloValues:TituloValues;
-    setTituloValues:Dispatch<SetStateAction<TituloValues>>
+    columnasValues:ColumnasValues;
+    setColumnasValues:Dispatch<SetStateAction<ColumnasValues>>
 }
 
-const Columnas:React.FC<ColumnasProps> = ({setTituloValues,tituloValues})=>{
+const Columnas:React.FC<ColumnasProps> = ({setColumnasValues,columnasValues})=>{
     const inputTituloRef = useRef<HTMLInputElement>(null)
+
     
-    const changeHandler = (event:ChangeEvent<HTMLSelectElement>)=>{
+    const withTituloChangehandler = (event:ChangeEvent<HTMLSelectElement>)=>{
+        const value = event.target.value;
         (inputTituloRef.current as HTMLInputElement).value = '';
-        setTituloValues({tieneTitulo:Number(event.target.value)});
+        setColumnasValues({...columnasValues,withTitulo:Number(value)});
+    }
+
+    const isFinalChangeHandler = (event:ChangeEvent<HTMLSelectElement>)=>{
+        const value = event.target.value;
+        setColumnasValues({...columnasValues,isFinal:Number(value)});
     }
     
     return (
         <>
-            <label>columnas</label>
+            {/* <label>columnas</label> */}
+            <label >codigo</label>
+            <input type="text" placeholder="columna" name="colCodigo"/>
+            <label >costo</label>
+            
             <div>
-                <input type="text" placeholder="codigo" name="colCodigo"/>
-                <input type="text" placeholder="costo" name="colCosto"/>
-                <input ref={inputTituloRef} type="text" placeholder="titulo" name="colTitulo" disabled={tituloValues.tieneTitulo?false:true}/>
-                <select onChange={changeHandler} name="tieneTitulo">
+                <input type="text" placeholder="columna" name="colCosto"/>
+                <select name="isFinal" onChange={isFinalChangeHandler}>
+                    <option value="0">costo</option>
+                    <option value="1">final</option>
+                </select>
+            </div>
+            <label >titulo</label>
+                
+            <div>
+                <input ref={inputTituloRef} type="text" placeholder="columna" name="colTitulo" disabled={columnasValues.withTitulo?false:true}/>
+                <select onChange={withTituloChangehandler} name="withTitulo">
                     <option value="1">con titulo</option>
                     <option value="0">sin titulo</option>
                 </select>

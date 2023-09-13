@@ -4,6 +4,7 @@ interface Config{
     colCodigo:number,
     colCosto:number,
     colTitulo:number,
+    withTitulo:number,
     iva:number,
     ivaIncluido:number,
     rentabilidad:number,
@@ -11,7 +12,6 @@ interface Config{
     modificacion:number,
     modificacionAfecta:number,
     xlsxItems:any[][],
-    tieneTitulo:number
     // cotizacion:CotizacionDolar;
 }
 

@@ -1,6 +1,6 @@
-import { MatchItems } from "@/types/precios"
-import { XlsxConfig } from "@/types/xlsx/types"
-import { cbFetch } from "@/utils/contabiliumApi"
+import { Config,MatchItem, XlsxProduct } from "@/types/Precios";
+import { Product } from "@/types/contabilium";
+import { MutableRefObject } from "react";
 
 const parseJson = (str:string)=>{
     try{
@@ -10,54 +10,57 @@ const parseJson = (str:string)=>{
     }
 }
 
-const updateProducts = async ({matchItems,apiToken,xlsxConfig }:{matchItems:MatchItems,apiToken:string, xlsxConfig:XlsxConfig})=>{
-    matchItems.cbProducts.forEach((product,index)=>{
-        const {costo,precio,rentabilidad,final,iva} = matchItems.xlsxProducts[index]
-
-        
-        const observacionesJson = parseJson(product.Observaciones) ?? {};
-        const anterior = {
-            CostoInterno:product.CostoInterno,
-            Precio:product.Precio,
-            PrecioFinal:product.PrecioFinal,
-            Rentabilidad:product.Rentabilidad,
-            Iva:product.Iva,
-            cotizacion:(observacionesJson.cotizacion ?? 1),
-            CostoInternoDolar:(observacionesJson.costoInternoDolar ?? 0)
-        };
-
-        
-        const newObservaciones = {
-            idProveedor:xlsxConfig.idProveedor,
-            cotizacion:xlsxConfig.cotizacion,
-            CostoInternoDolar:Number(costo/xlsxConfig.cotizacion.venta).toFixed(2),
-            anterior:anterior,
-        }
-        
-        const newProduct = {...product,
-            CostoInterno:costo,
-            Precio:precio,
-            Rentabilidad:rentabilidad,
-            PrecioFinal:final,
-            Iva:iva,
-            Tipo:"P",
-            Estado:"A",
-            Observaciones:JSON.stringify(newObservaciones,null,2)
-        }
-        const productId = product.Id;    
-        const config = {
-            endpoint:`/api/conceptos/?id=${productId}`,
-            method:"PUT" as "PUT",
-            token:apiToken,
-            body:JSON.stringify(newProduct)
-        }
-
-        // console.log(config)
-        cbFetch(config)
-    })
-
-
+interface UpdateProductsProps{
+    matchItems:MatchItem[];
+    config:Config;
+    serializedProducts:Record<string,Product>;
+    token:string;
+    // serializedXlsxItems:MutableRefObject<Record<string,XlsxProduct>>;
 }
 
 
-export {updateProducts}
+    const updateProducts = async ({matchItems,serializedProducts,config,token}:UpdateProductsProps)=>{
+        const updatedPromises = matchItems.map(({codigo,descripcion,costo,rentabilidad,precio,iva,final})=>{
+            // const {costo,precio,rentabilidad,final,iva} = matchItems.xlsxProducts[index]
+            const cbProduct = serializedProducts[codigo]
+            const {idProveedor} = config;
+
+            const newProduct:Product = {...cbProduct,
+                CostoInterno:costo,
+                Precio:precio,
+                Rentabilidad:rentabilidad,
+                PrecioFinal:final,
+                Iva:iva,
+                Tipo:"P",
+                Estado:"A",
+                CodigoBarras:idProveedor.toString()
+            }
+            const {Id} = cbProduct;
+            const endpoint ="https://rest.contabilium.com/api/conceptos/?id="+Id
+            const fetchConfig = {
+                method:'PUT',
+                headers:{
+                    'Content-Type':'application/json',
+                    'Authorization':'Bearer '+token,
+                },
+                body:JSON.stringify(newProduct)
+            }
+
+            return [fetch(endpoint,fetchConfig),codigo];
+        })
+
+        const promises = updatedPromises.map(([promise])=>(promise as Promise<Response>))
+
+        const updates= await Promise.all(promises).then(updatesResponses=>{
+            return updatesResponses.map((updateResponse,index)=>{
+                const [_,codigo] = updatedPromises[index];
+                return updateResponse.ok?{codigo,status:1}:{codigo,status:2};
+            })
+        })
+        return updates as {codigo:string,status:number}[];
+    }
+
+
+
+
+export {updateProducts};

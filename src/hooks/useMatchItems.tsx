@@ -13,25 +13,40 @@ const useMatchItems = ({products,config}:{products:Product[];config:Config})=>{
     const serializedXlsxItems = serializeXlsxItems(config);
 
     const matchXlsxAndCbProducts = ()=>{
-        const serializedProducts:Record<string,Product> = serializeArray(products,"Codigo")
-        const matchItems = Object.values(serializedXlsxItems).reduce((acc,{codigo,costo})=>{
-            // const codigo = currentXlsxProduct[colCodigo-1].toString();
-            // const costo = currentXlsxProduct[colCosto-1];
+        // const serializedProducts:Record<string,Product> = serializeArray(products,"Descripcion")
 
-            if(serializedProducts[codigo]){  
-                const currentProduct = serializedProducts[codigo];
-                const xlsxCosto = Number(costo);
-                const rentabilidadPrevia = currentProduct.Rentabilidad;
-                const ivaPrevio = currentProduct.Iva;
+        // const matchItems = Object.values(serializedXlsxItems).reduce((acc,{codigo,costo})=>{
+
+        //     if(serializedProducts[codigo]){  
+        //         const currentProduct = serializedProducts[codigo];
+        //         const xlsxCosto = Number(costo);
+        //         const rentabilidadPrevia = currentProduct.Rentabilidad;
+        //         const ivaPrevio = currentProduct.Iva;
+        //         const newCostos = genCostos({xlsxCosto,rentabilidadPrevia,ivaPrevio,config})
+
+        //         const matchItem:MatchItem = {codigo,...newCostos}
+
+        //         const discriminarBoolean = (Number(currentProduct.CodigoBarras) == idProveedor);
+        //         if(!discriminar || (discriminar && discriminarBoolean)) 
+        //         acc.push(matchItem);   
+        //     }
+        //     return acc;
+        // },[] as MatchItem[])
+        const matchItems = products.reduce((acc,{Descripcion:descripcion,Codigo:codigo,CodigoBarras,Rentabilidad,Iva})=>{
+            if(serializedXlsxItems[descripcion]){
+                const {costo} = serializedXlsxItems[descripcion];
+                const xlsxCosto = costo?Number(costo):0;
+                const rentabilidadPrevia = Rentabilidad;
+                const ivaPrevio = Iva;
                 const newCostos = genCostos({xlsxCosto,rentabilidadPrevia,ivaPrevio,config})
 
-                const matchItem:MatchItem = {codigo,...newCostos}
+                const matchItem:MatchItem = {codigo,descripcion,...newCostos}
 
-                const discriminarBoolean = (Number(currentProduct.CodigoBarras) == idProveedor);
+                const discriminarBoolean = (CodigoBarras == idProveedor.toString());
                 if(!discriminar || (discriminar && discriminarBoolean)) 
-                acc.push(matchItem);   
+                acc.push(matchItem);                 
             }
-            return acc;
+            return acc; 
         },[] as MatchItem[])
         setMatchItems(matchItems);
     }

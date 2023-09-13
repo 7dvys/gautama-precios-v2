@@ -4,8 +4,9 @@ import styles from '@/assets/RootNav.module.css'
 import { usePathname } from 'next/navigation'
 
 export const RootNav:React.FC = ()=>{
+    const currentPath = usePathname().slice(1);
+    
     const checkFocus = (page:string)=>{
-        const currentPath = usePathname().slice(1);
         if(page == currentPath || (!currentPath && page=='inicio'))
         return styles.focus;
     }

@@ -31,7 +31,7 @@ const Precios:React.FC = ()=>{
         discriminar:0,
         colCodigo:1,
         colTitulo:2,
-        tieneTitulo:1,
+        withTitulo:1,
         colCosto:3,
         iva:0,
         ivaIncluido:0,
@@ -48,7 +48,7 @@ const Precios:React.FC = ()=>{
                 <InformationPanel products={(products)}/>
                 <ConfigPanel config={config} setConfig={setConfig} vendors={vendors} products={products}/>
             </aside>
-            <MatchTable products={products} config={config}/>
+            <MatchTable products={products} config={config} token={token} vendors={vendors}/>
         </>
     )
 }

@@ -1,7 +1,7 @@
 import { useRef,useEffect, useState, } from "react";
 import { ConfigPanelProps,Config } from "@/types/Precios";
 import { initializateXlsxWorker, setConfigChangeHandler, setConfirmHandler } from "@/utils/precios/configPanel";
-import { Proveedores,Rentabilidad,Hojas, Columnas } from "@/components/Precios/ConfigPanel";
+import { Proveedores,Hojas, Columnas } from "@/components/Precios/ConfigPanel";
 import * as XLSX from 'xlsx';
 import { useManageDisabled } from "@/hooks/useManageDisabled";
 
@@ -16,12 +16,14 @@ const ConfigPanel:React.FC<ConfigPanelProps> = ({config,setConfig,vendors,produc
 
     const [proveedoresValues,setProveedoresValues] = useState({
         vendorValue:'none',
-        discriminarValue:'none',
+        discriminarValue:0,
     });
-    const [rentabilidadValues,setRentabilidadValues] = useState({isFinal:0});
-    const [selectedSheet,setSelectedSheet] = useState('none');
-    const [TituloValues,setTituloValues] = useState({tieneTitulo:1});
 
+    const [selectedSheet,setSelectedSheet] = useState('none');
+    const [columnasValues,setColumnasValues] = useState({
+        isFinal:0,
+        withTitulo:1
+    })
     
     const {configChangeHandler} = setConfigChangeHandler({refConfig,setDisabled,xlsxWorker,refSelectSheet})
     const {confirmHandler} = setConfirmHandler({refConfig,config,setConfig});
@@ -29,11 +31,11 @@ const ConfigPanel:React.FC<ConfigPanelProps> = ({config,setConfig,vendors,produc
 
     useEffect(()=>{
         initializateWorker();
-    },[])
+    })
 
     useEffect(()=>{
         products.length?setEnabled():setDisabled();            
-    },[products])
+    })
 
     return (
         <article onChange={configChangeHandler} className="box formBox">
@@ -51,14 +53,14 @@ const ConfigPanel:React.FC<ConfigPanelProps> = ({config,setConfig,vendors,produc
 
             <Hojas xlsxWorkBook={xlsxWorkBook} setDisabled={setDisabled} xlsxWorker={xlsxWorker} refConfig={refConfig} refSelectSheet={refSelectSheet} setSelectedSheet={setSelectedSheet} selectedSheet={selectedSheet} />
 
-            <Columnas setTituloValues={setTituloValues} tituloValues={TituloValues}/>
+            <Columnas columnasValues={columnasValues} setColumnasValues={setColumnasValues}/>
 
             <label>iva</label>
             <div>
                 <input name="iva" type="number" min={0} />
                 <select name="ivaIncluido" >
-                    <option value="1">incluido</option>
                     <option value="0">no incluido</option>
+                    <option value="1">incluido</option>
                 </select>
             </div>
 
@@ -71,7 +73,8 @@ const ConfigPanel:React.FC<ConfigPanelProps> = ({config,setConfig,vendors,produc
                 </select>
             </div>
 
-            <Rentabilidad rentabilidadValues={rentabilidadValues} setRentabilidadValues={setRentabilidadValues}/>
+            <label>rentabilidad</label>
+            <input type="number" name="rentabilidad"/>
 
             <div>
             {/* <button ref={refAceptButton} onClick={()=>{console.log(refConfig.current)}}>aceptar</button> */}
