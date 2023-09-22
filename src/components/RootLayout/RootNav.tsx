@@ -13,7 +13,11 @@ export const RootNav:React.FC = ()=>{
     
     return(
     <nav className={styles.RootNav}>
-        {['inicio','precios','imap','pedidos','opciones'].map((page,index)=>{
+        {
+        // ['inicio','productos','precios','imap','pedidos','opciones']
+        ['inicio','precios','opciones']
+
+        .map((page,index)=>{
                 return (<Link key={index} href={index?page:'/'} className={checkFocus(page)}>{page}</Link>)
             })
         }

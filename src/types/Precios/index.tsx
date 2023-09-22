@@ -1,4 +1,13 @@
 export type {Config} from './Config';
 export type {XlsxProduct} from './XlsxProduct';
 export type {ConfigPanelProps} from './ConfigPanelProps';
-export type {MatchItem} from './MatchItem'
+export type {MatchTableProps} from './MatchTableProps';
+export type {MatchItem} from './MatchItem';
+export type {MatchItems} from './MatchItems';
+export type {Products} from './Products';
+export type {SerializedProduct} from './SerializedProducts';
+export type {SerializedProducts} from './SerializedProducts';
+export type {SerializedXlsxItems} from './SerializedXlsxItems';
+export type {Warnings,WarningsCount} from './Warnings';
+export type {UpdateMatchItems} from './UpdateMatchItems';
+export type {DeleteMatchItem} from './DeleteMatchItem';

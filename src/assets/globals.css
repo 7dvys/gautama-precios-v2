@@ -44,6 +44,18 @@ main {
   box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
 }
 
+.flex{
+  display: flex;
+}
+
+.flex-column{
+  flex-direction: column;
+}
+
+.flex-gap{
+  gap:1rem
+}
+
 /* Form Box */
 .formBox{
   display: grid;
@@ -67,7 +79,4 @@ main {
 .formBox h3{
   margin-bottom: 0.5rem;
 }
-
-
-
 

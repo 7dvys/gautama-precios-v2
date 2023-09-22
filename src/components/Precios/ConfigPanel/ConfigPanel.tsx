@@ -1,15 +1,18 @@
+'use client'
 import { useRef,useEffect, useState, } from "react";
 import { ConfigPanelProps,Config } from "@/types/Precios";
 import { initializateXlsxWorker, setConfigChangeHandler, setConfirmHandler } from "@/utils/precios/configPanel";
 import { Proveedores,Hojas, Columnas } from "@/components/Precios/ConfigPanel";
-import * as XLSX from 'xlsx';
 import { useManageDisabled } from "@/hooks/useManageDisabled";
+import * as XLSX from 'xlsx';
+import { ACCOUNT_TYPE, LOCALSTORAGE_KEYS } from "@/constants";
 
 const ConfigPanel:React.FC<ConfigPanelProps> = ({config,setConfig,vendors,products})=>{
 
     const [xlsxWorkBook,setXlsxWorkBook] = useState<XLSX.WorkBook>({SheetNames:[] as string[]} as XLSX.WorkBook);
     const refConfig = useRef<Config>(config);
     const {refAceptButton,refInputFile,refSelectSheet,setDisabled,setEnabled} = useManageDisabled()
+    const accountType = typeof window != 'undefined'?localStorage.getItem(LOCALSTORAGE_KEYS.accountType):ACCOUNT_TYPE.main;
     
     const xlsxWorker = useRef<Worker>({} as Worker);
     const {initializateWorker} = initializateXlsxWorker({setXlsxWorkBook,refConfig,setEnabled,xlsxWorker});
@@ -34,8 +37,9 @@ const ConfigPanel:React.FC<ConfigPanelProps> = ({config,setConfig,vendors,produc
     })
 
     useEffect(()=>{
-        products.length?setEnabled():setDisabled();            
-    })
+        const {main,secondary} = products;
+        (accountType == ACCOUNT_TYPE.main && main.length && secondary.length)||(accountType == ACCOUNT_TYPE.secondary && secondary.length)?setEnabled():setDisabled();            
+    },[products])
 
     return (
         <article onChange={configChangeHandler} className="box formBox">
@@ -66,7 +70,7 @@ const ConfigPanel:React.FC<ConfigPanelProps> = ({config,setConfig,vendors,produc
 
             <label>modificacion</label>
             <div>
-                <input name="modificacion" type="number" min={0} />
+                <input name="modificacion" type="number"/>
                 <select name="modificacionAfecta" >
                     <option value="1">afecta</option>
                     <option value="0">no afecta</option>

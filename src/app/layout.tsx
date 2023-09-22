@@ -1,27 +1,31 @@
+'use client'
 import '@/assets/globals.css'
-import { Inter } from 'next/font/google'
 import { RootNav } from '@/components/RootLayout'
-const inter = Inter({ subsets: ['latin'] })
-
-import { Metadata } from "next";
-
-export const metadata: Metadata = {
-  title: 'Inicio - Movimientos',
-}
+import { useContabiliumApi } from '@/hooks/useContabiliumApi'
+import { useEffect } from 'react'
+import { rootContext } from '@/context'
 
 export default function RootLayout({
   children,
 }: {
   children: React.ReactNode
 }) {
+
+  const {login,vendors,products,updateProducts} = useContabiliumApi();
+ 
   return (
     <html lang="en">
-      <body className={inter.className}>
+      <body>
         <main>
         <RootNav/>
-        {children}
+        <article className="tool">
+          <rootContext.Provider value={{login,vendors,products,updateProducts}}>
+            {children}
+          </rootContext.Provider>
+        </article>
         </main>
       </body>
     </html>
   )
 }
+

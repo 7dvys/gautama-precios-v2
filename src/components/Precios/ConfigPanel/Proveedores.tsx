@@ -1,3 +1,4 @@
+'use client'
 import { Vendor } from "@/types/contabilium";
 import { ChangeEvent, Dispatch, SetStateAction } from "react";
 

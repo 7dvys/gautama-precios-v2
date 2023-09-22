@@ -1,11 +1,11 @@
-import { useRef,Dispatch,SetStateAction,MutableRefObject } from "react";
+import { Dispatch,SetStateAction,MutableRefObject } from "react";
 import { Config } from "@/types/Precios";
 import XLSX from 'xlsx';
 
 interface InitializateXlsxWorkerProps{
-    setXlsxWorkBook:Dispatch<SetStateAction<XLSX.WorkBook>>,
-    refConfig:MutableRefObject<Config>,
-    setEnabled:Function
+    setXlsxWorkBook:Dispatch<SetStateAction<XLSX.WorkBook>>;
+    refConfig:MutableRefObject<Config>;
+    setEnabled:Function;
     xlsxWorker:MutableRefObject<Worker>;
 }
 

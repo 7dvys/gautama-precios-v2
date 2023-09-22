@@ -1,3 +1,4 @@
+'use client'
 import { Config } from "@/types/Precios";
 import { ChangeEvent, Dispatch, MutableRefObject, RefObject, SetStateAction } from "react";
 import XLSX from 'xlsx';

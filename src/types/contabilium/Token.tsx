@@ -1,0 +1,1 @@
+export type Token = {main:string,secondary:string};

@@ -5,7 +5,7 @@ const serializeXlsxItems = (config:Config)=>{
     
     return xlsxItems.reduce((acc,xlsxItem)=>{
 
-        const codigo = xlsxItem[colCodigo-1]?xlsxItem[colCodigo-1].toString():false;
+        const codigo = xlsxItem[colCodigo-1]?xlsxItem[colCodigo-1].toString().trim():false;
         const titulo = config.withTitulo?xlsxItem[colTitulo-1]:'';
         const costo = Number(xlsxItem[colCosto-1])??0;
         const newXlsxItem = {codigo,titulo,costo}

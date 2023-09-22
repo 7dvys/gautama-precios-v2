@@ -2,9 +2,9 @@ import { Config, MatchItem } from "../Precios";
 import { Product } from "../contabilium";
 
 interface DetallesPrecios{
-    matchItems:MatchItem[];
+    matchItems:{main:MatchItem[],secondary:MatchItem[]};
     config:Config;
-    products:Product[];
+    products:{main:Product[],secondary:Product[]};
 }
 
 interface Movement{

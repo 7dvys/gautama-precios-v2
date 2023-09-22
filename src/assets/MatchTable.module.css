@@ -52,11 +52,14 @@
 /* TABLE CONTAINER */
 .tableContainer{
     overflow: scroll;
+    max-width: 86vw;
 }
 
 .table{
     border-collapse: collapse;
     width: 100%;
+    overflow: scroll;
+
 }
 
 .table>thead{
@@ -76,7 +79,7 @@
 }
 
 
-.table>thead> tr,.table>tbody> tr{
+.table>thead> tr,.table tbody tr{
     border-bottom: 1px solid var(--grey-beige);
     text-align: left;
 }
@@ -116,4 +119,11 @@
     cursor: pointer;
 }
 
+.main{
+    padding-bottom: 2px;
+    border-bottom: 2rem  double var(--grey-beige);
+}
 
+.row{
+    border-bottom: 2px solid red;
+}

@@ -6,7 +6,7 @@ interface ConfigPanelProps{
     config:Config;
     setConfig:Dispatch<SetStateAction<Config>>
     vendors:Vendor[];
-    products:Product[]
+    products:{main:Product[],secondary:Product[]}
 }
 
 export type {ConfigPanelProps};

@@ -1,3 +1,5 @@
+import { XlsxProduct } from ".";
+
 interface Config{
     idProveedor:number,
     discriminar:number,
@@ -11,7 +13,7 @@ interface Config{
     isFinal:number,
     modificacion:number,
     modificacionAfecta:number,
-    xlsxItems:any[][],
+    xlsxItems:XlsxProduct[],
     // cotizacion:CotizacionDolar;
 }
 
