@@ -11,3 +11,4 @@ export type {SerializedXlsxItems} from './SerializedXlsxItems';
 export type {Warnings,WarningsCount} from './Warnings';
 export type {UpdateMatchItems} from './UpdateMatchItems';
 export type {DeleteMatchItem} from './DeleteMatchItem';
+export type {HelperWorkers} from './HelperWorkers';

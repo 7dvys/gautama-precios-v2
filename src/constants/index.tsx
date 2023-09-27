@@ -1,3 +1,5 @@
+import { Config, HelperWorkers } from "@/types/Precios";
+
 // LocalStorage Keys
 export const LOCALSTORAGE_KEYS = {
     // ConatbiliumApi
@@ -21,5 +23,12 @@ export const IndexedDb = {
     NAME:'gautama-precios',
     OBJECTS_STORE:{
         movimientos:'movimientos',
+        helpers:'helpers'
     },
 }
+
+// para cada helper lo crearemos en la carpeta $key con el nombre del helper.
+
+
+
+export const HELPERWORKERS:HelperWorkers = {29201900:[['helperName','explication',{}]]};

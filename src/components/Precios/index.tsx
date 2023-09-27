@@ -6,7 +6,6 @@ import { useState,useContext, useEffect } from "react";
 import { rootContext } from "@/context";
 import { InformationPanel } from "./InformationPanel";
 import { MatchTable } from "./MatchTable";
-import styles from '@/assets/MatchTable.module.css';
 
 
 const Precios:React.FC = ()=>{
@@ -25,6 +24,7 @@ const Precios:React.FC = ()=>{
         isFinal:0,
         modificacion:0,
         modificacionAfecta:1,
+        cotizacion:'blue',
         xlsxItems:[]
     }
 

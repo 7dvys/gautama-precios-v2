@@ -1,36 +1,76 @@
 'use client'
-import { useRef,useEffect, useState, } from "react";
+import { useRef,useEffect, useState, ChangeEvent, } from "react";
 import { ConfigPanelProps,Config } from "@/types/Precios";
-import { initializateXlsxWorker, setConfigChangeHandler, setConfirmHandler } from "@/utils/precios/configPanel";
-import { Proveedores,Hojas, Columnas } from "@/components/Precios/ConfigPanel";
+import { initializateXlsxWorker } from "@/utils/precios/configPanel";
+import { Proveedores,Hojas, Columnas, Cotizaciones } from "@/components/Precios/ConfigPanel";
 import { useManageDisabled } from "@/hooks/useManageDisabled";
-import * as XLSX from 'xlsx';
+import { letterToNumber } from "@/utils";
 import { ACCOUNT_TYPE, LOCALSTORAGE_KEYS } from "@/constants";
+import * as XLSX from 'xlsx';
 
 const ConfigPanel:React.FC<ConfigPanelProps> = ({config,setConfig,vendors,products})=>{
 
     const [xlsxWorkBook,setXlsxWorkBook] = useState<XLSX.WorkBook>({SheetNames:[] as string[]} as XLSX.WorkBook);
     const refConfig = useRef<Config>(config);
+
     const {refAceptButton,refInputFile,refSelectSheet,setDisabled,setEnabled} = useManageDisabled()
+
     const accountType = typeof window != 'undefined'?localStorage.getItem(LOCALSTORAGE_KEYS.accountType):ACCOUNT_TYPE.main;
     
     const xlsxWorker = useRef<Worker>({} as Worker);
     const {initializateWorker} = initializateXlsxWorker({setXlsxWorkBook,refConfig,setEnabled,xlsxWorker});
 
-    const [proveedoresValues,setProveedoresValues] = useState({
-        vendorValue:'none',
-        discriminarValue:0,
-    });
+    const cotizacionRef = useRef<HTMLSelectElement>(null);
+    const vendorRef = useRef<HTMLSelectElement>(null);
+    const vendorFilterRef = useRef<HTMLSelectElement>(null);
+    const ivaRef = useRef<HTMLInputElement>(null)
+    const ivaIncludedRef = useRef<HTMLSelectElement>(null);
+    const columnaCodigoRef = useRef<HTMLInputElement>(null)
+    const columnaCostoRef = useRef<HTMLInputElement>(null)
+    const isFinalRef = useRef<HTMLSelectElement>(null);
+    const columnaTituloRef = useRef<HTMLInputElement>(null)
+    const withTituloRef = useRef<HTMLSelectElement>(null);
+    const modifyRef = useRef<HTMLInputElement>(null)
+    const modifyAffectRef = useRef<HTMLSelectElement>(null);
+    const profitRef = useRef<HTMLInputElement>(null)
 
-    const [selectedSheet,setSelectedSheet] = useState('none');
-    const [columnasValues,setColumnasValues] = useState({
-        isFinal:0,
-        withTitulo:1
-    })
+    const setConfigRef = (array:{name:string,value:string}[])=>{
+        array.forEach(element=>{
+            const {name,value}= element as {name:string,value:string}
+            
+            if (name in refConfig.current && name != 'cotizacion' && name != 'xlsxItems')
+            refConfig.current[name as keyof Omit<Omit<Config,'cotizacion'>,'xlsxItems'>] = (name == 'colCodigo' || name == 'colCosto' || name =='colTitulo')?letterToNumber(value):Number(value);
+
+            if(name == 'cotizacion')
+            refConfig.current[name] = value;
+        });
+    }
     
-    const {configChangeHandler} = setConfigChangeHandler({refConfig,setDisabled,xlsxWorker,refSelectSheet})
-    const {confirmHandler} = setConfirmHandler({refConfig,config,setConfig});
+    const confirmHandler = ()=>{
+        let error = '';
+        if(!refConfig.current.xlsxItems.length)
+        error += '[!] Tu hoja no tiene items: coloca una hoja valida.\n\n';
 
+        if(!Number((vendorRef.current as HTMLSelectElement).value))
+        error += '[!] Coloca un proveedor.';
+
+        if(!error){
+            setConfigRef([cotizacionRef.current,vendorRef.current,vendorFilterRef.current,columnaCodigoRef.current,columnaCostoRef.current,columnaTituloRef.current,isFinalRef.current,withTituloRef.current,ivaRef.current,ivaIncludedRef.current,modifyRef.current,modifyAffectRef.current,profitRef.current] as {name:string,value:string}[])
+            setConfig({...config,...refConfig.current});
+            console.log(refConfig.current)
+        } else alert(error);
+
+    }
+
+    const fileChangeHandler = (event:ChangeEvent<HTMLInputElement>)=>{
+        const files = (event as ChangeEvent<HTMLInputElement>).target.files;
+        if (files){
+            setDisabled();
+            (refSelectSheet.current as HTMLSelectElement).value = 'none';
+            refConfig.current.xlsxItems = [];
+            xlsxWorker.current.postMessage({task:'read',attach:(files as FileList)[0]});
+        }
+    }
 
     useEffect(()=>{
         initializateWorker();
@@ -41,28 +81,28 @@ const ConfigPanel:React.FC<ConfigPanelProps> = ({config,setConfig,vendors,produc
         (accountType == ACCOUNT_TYPE.main && main.length && secondary.length)||(accountType == ACCOUNT_TYPE.secondary && secondary.length)?setEnabled():setDisabled();            
     },[products])
 
+    // Pages and Filter searchs
+    const [page,setPage] = useState<number>(0);
+
     return (
-        <article onChange={configChangeHandler} className="box formBox">
+        <article className="box formBox">
             <h3>Configuracion</h3>
 
-            {/* <label>cotizacion</label>
-            <select name="cotizacion">
-                <option value="">cotizacion</option>
-            </select> */}
-
-            <Proveedores setProveedoresValues={setProveedoresValues} proveedoresValues={proveedoresValues} vendors={vendors}/>
-
             <label>archivo</label>
-            <input ref={refInputFile} type="file" name="file"/>
+            <input onChange={fileChangeHandler} ref={refInputFile} type="file" name="file"/>
+            
+            <Proveedores vendors={vendors} vendorRef={vendorRef} vendorFilterRef={vendorFilterRef} xlsxWorkBook={xlsxWorkBook} setConfigRef={setConfigRef} refConfig={refConfig}/>
 
-            <Hojas xlsxWorkBook={xlsxWorkBook} setDisabled={setDisabled} xlsxWorker={xlsxWorker} refConfig={refConfig} refSelectSheet={refSelectSheet} setSelectedSheet={setSelectedSheet} selectedSheet={selectedSheet} />
+            <Cotizaciones cotizacionRef={cotizacionRef}/>
 
-            <Columnas columnasValues={columnasValues} setColumnasValues={setColumnasValues}/>
+            <Hojas xlsxWorkBook={xlsxWorkBook} setDisabled={setDisabled} xlsxWorker={xlsxWorker} refConfig={refConfig} refSelectSheet={refSelectSheet}/>
+
+            <Columnas columnaCodigoRef={columnaCodigoRef} columnaCostoRef={columnaCostoRef} columnaTituloRef={columnaTituloRef} isFinalRef={isFinalRef} withTituloRef={withTituloRef}/>
 
             <label>iva</label>
             <div>
-                <input name="iva" type="number" min={0} />
-                <select name="ivaIncluido" >
+                <input ref={ivaRef} name="iva" type="number" min={0} />
+                <select ref={ivaIncludedRef} name="ivaIncluido">
                     <option value="0">no incluido</option>
                     <option value="1">incluido</option>
                 </select>
@@ -70,19 +110,18 @@ const ConfigPanel:React.FC<ConfigPanelProps> = ({config,setConfig,vendors,produc
 
             <label>modificacion</label>
             <div>
-                <input name="modificacion" type="number"/>
-                <select name="modificacionAfecta" >
+                <input ref={modifyRef} name="modificacion" type="number"/>
+                <select ref={modifyAffectRef} name="modificacionAfecta" >
                     <option value="1">afecta</option>
                     <option value="0">no afecta</option>
                 </select>
             </div>
 
             <label>rentabilidad</label>
-            <input type="number" name="rentabilidad"/>
+            <input ref={profitRef} type="number" name="rentabilidad"/>
 
             <div>
-            {/* <button ref={refAceptButton} onClick={()=>{console.log(refConfig.current)}}>aceptar</button> */}
-            <button ref={refAceptButton} onClick={confirmHandler}>aceptar</button>
+                <button ref={refAceptButton} onClick={confirmHandler}>aceptar</button>
             </div>
         </article>
     )

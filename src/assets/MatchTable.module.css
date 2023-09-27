@@ -12,12 +12,22 @@
     padding: 1rem;
 }
 
+.tableOptions>.control{
+    display: flex;
+    gap: .5rem;
+}
+
+.tableOptions>.control>input{
+    display: flex;
+    border: 1px solid var(--grey-beige);
+}
+
 .tableOptions>.information{
     display: flex;
     /* gap: 0.4rem; */
 }
 
-.tableOptions>.information>span{
+.tableOptions span{
     padding: 0.5rem;
     border: 1px solid var(--grey-beige);
 }
@@ -59,7 +69,6 @@
     border-collapse: collapse;
     width: 100%;
     overflow: scroll;
-
 }
 
 .table>thead{
@@ -83,7 +92,6 @@
     border-bottom: 1px solid var(--grey-beige);
     text-align: left;
 }
-
 
 .table td,.table th{
     padding: 0.5rem;

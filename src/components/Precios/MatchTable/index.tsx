@@ -12,8 +12,7 @@ import { Database } from "@/types";
 import { Movement } from "@/types/movimientos";
 import { ACCOUNT_TYPE, LOCALSTORAGE_KEYS } from "@/constants";
 import { createMovementToDb } from '@/utils/precios/MatchTable';
-import { Information } from './Information';
-
+import { TableControl } from './TableControl';
 const MatchTable:React.FC<MatchTableProps> = ({products,config,vendors,updateProducts})=>{
     
     const {main,secondary}=products;
@@ -52,10 +51,9 @@ const MatchTable:React.FC<MatchTableProps> = ({products,config,vendors,updatePro
     },[matchItems])
 
     const aceptarHandler = ()=>{
-        if(confirm('[!] seguro que desea ACEPTAR?') && updateProducts)
+        if(updateProducts && (matchItems.main.length || matchItems.secondary.length) && confirm('[!] seguro que desea ACEPTAR?'))
         updateProducts({matchItems,config,serializedProducts}).then(()=>{
             // setWereUpdated(updates);
-            
             const {movimiento} = createMovementToDb({matchItems,vendors,config,serializedProducts})
             console.log(movimiento)
             // movimientosDb.add([movimiento]);
@@ -71,7 +69,7 @@ const MatchTable:React.FC<MatchTableProps> = ({products,config,vendors,updatePro
     return (
     <div className={styles.matchTable}>
         <div className={`${styles.tableOptions} box`}>
-            <Information matchItems={matchItems} warningsCount={warningsCount.current} aceptarHandler={aceptarHandler} cancelarHandler={cancelarHandler}/>
+            <TableControl matchItems={matchItems} warningsCount={warningsCount.current} aceptarHandler={aceptarHandler} cancelarHandler={cancelarHandler}/>
         </div>
         <div className={`${styles.tableContainer} box`}> 
             <table className={`${styles.table}`}>
@@ -79,7 +77,7 @@ const MatchTable:React.FC<MatchTableProps> = ({products,config,vendors,updatePro
                     <tr>
                         {['codigo','descripcion','titulo','final anterior','costo','precio','final',''].map((title,index)=>(
                             <th key={index}>{title}</th>
-                            ))}
+                        ))}
                     </tr>
                 </thead>
                 <tbody>

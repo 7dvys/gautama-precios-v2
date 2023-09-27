@@ -20,6 +20,10 @@ body{
   background-color: var(--grey-beige);
 }
 
+input:not([type="file"]),select{
+  padding-left: 6px;
+}
+
 main {
   display: flex;
   flex-direction: column;
@@ -39,9 +43,9 @@ main {
 /* General */
 .box{
   padding: 1.5rem;
-  border-radius: 0.5rem;
+  border-radius: 0.2rem;
   background-color: var(--white);
-  box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
+  box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 2px 0px;
 }
 
 .flex{

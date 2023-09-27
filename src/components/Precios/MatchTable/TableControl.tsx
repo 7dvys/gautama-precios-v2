@@ -2,7 +2,7 @@ import styles from '@/assets/MatchTable.module.css'
 import { MatchItems, WarningsCount } from '@/types/Precios'
 
 
-export const Information:React.FC<{matchItems:MatchItems,warningsCount:WarningsCount,cancelarHandler:()=>void,aceptarHandler:()=>void}> = ({matchItems,warningsCount,cancelarHandler,aceptarHandler})=>{
+export const TableControl:React.FC<{matchItems:MatchItems,warningsCount:WarningsCount,cancelarHandler:()=>void,aceptarHandler:()=>void}> = ({matchItems,warningsCount,cancelarHandler,aceptarHandler})=>{
     const {coincidenciasTitle,coincidenciasCount} = (()=>{
         const {main,secondary} = matchItems;
         const coincidenciasTitle = `rpm 764: ${main.length}\nrpm 925: ${secondary.length}`;
@@ -20,9 +20,20 @@ export const Information:React.FC<{matchItems:MatchItems,warningsCount:WarningsC
         })
         return {disonantes,dispares};
     })()
+
+
     
     return (
         <>
+            <div className={styles.control}>
+                <input placeholder='buscar' type="text" />
+                <div className='flex'>
+                    <span>❮</span>
+                    <span>pagina 1 de 10</span>
+                    <span>❯</span>
+                </div>
+            </div>
+                
             <div className={styles.information}>
                 <span title={coincidenciasTitle}>coincidencias: {coincidenciasCount}</span>
                 <span title={disonantes.title}>titulos disonantes: {disonantes.count}</span>

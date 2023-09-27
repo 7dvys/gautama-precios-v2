@@ -1,4 +1,5 @@
 import { XlsxProduct } from ".";
+import { Cotizacion } from "../cotizaciones";
 
 interface Config{
     idProveedor:number,
@@ -14,7 +15,7 @@ interface Config{
     modificacion:number,
     modificacionAfecta:number,
     xlsxItems:XlsxProduct[],
-    // cotizacion:CotizacionDolar;
+    cotizacion:string;
 }
 
 export type {Config}

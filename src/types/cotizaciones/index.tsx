@@ -1,3 +1,5 @@
+type Cotizacion = {title:string,value:number};
+
 interface CotizacionesProps{
     getCotizaciones: () => Record<string, number>;
     updateCotizacion: ({ title, value }: {
@@ -9,4 +11,4 @@ interface CotizacionesProps{
     }) => Record<string,number>
 }
 
-export type {CotizacionesProps};
+export type {CotizacionesProps,Cotizacion};
