@@ -1,7 +1,7 @@
 'use client'
 
 import { ACCOUNT_TYPE, LOCALSTORAGE_KEYS } from "@/constants";
-import { useRef,ChangeEvent,useContext } from "react";
+import { useRef,ChangeEvent,useContext, useEffect } from "react";
 import { rootContext } from "@/context";
 import { LoginProps } from "@/types/contabilium";
 
@@ -76,7 +76,10 @@ const ContabiliumOptions:React.FC = ()=>{
         }
     }
 
-   
+   useEffect(()=>{
+    if(isClient)
+    if(!localStorage.getItem(LOCALSTORAGE_KEYS.accountType)) localStorage.setItem(LOCALSTORAGE_KEYS.accountType,ACCOUNT_TYPE.main);
+   },[])
 
     return (
         <>

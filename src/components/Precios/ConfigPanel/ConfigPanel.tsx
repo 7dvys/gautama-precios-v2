@@ -7,7 +7,7 @@ import { useManageDisabled } from "@/hooks/useManageDisabled";
 import { letterToNumber } from "@/utils";
 import { ACCOUNT_TYPE, LOCALSTORAGE_KEYS } from "@/constants";
 import * as XLSX from 'xlsx';
-import { InformationPanel } from "../InformationPanel";
+import { InformationPanel } from "./InformationPanel";
 
 const ConfigPanel:React.FC<ConfigPanelProps> = ({config,setConfig,vendors,products})=>{
 

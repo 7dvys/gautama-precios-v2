@@ -36,7 +36,6 @@ main {
   gap: 1rem;
   flex-wrap: nowrap;
   padding: 2rem;
-  height: 95vh;
 }
 
 
@@ -58,6 +57,14 @@ main {
 
 .flex-gap{
   gap:1rem
+}
+
+.sticky {
+  position: sticky;
+  top: 0; /* Ajusta la posición según sea necesario */
+  z-index: 1; /* Puedes ajustar el valor de z-index según sea necesario */
+  background-color: #fff; /* Fondo blanco para que resalte */
+  /* Añade otros estilos según tus preferencias */
 }
 
 /* Form Box */

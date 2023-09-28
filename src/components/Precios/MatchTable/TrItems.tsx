@@ -12,14 +12,14 @@ interface TrItemProps{
     updateMatchItems:UpdateMatchItems;
     deleteMatchItem:DeleteMatchItem;
     item:MatchItemWithTableAndCurrentProduct;
+    wasUpdated:{codigo:string,status:number,table:string}
 }
 
-const TrItem:React.FC<TrItemProps> = ({serializedXlsxItems,updateMatchItems,deleteMatchItem,item,warnings,matchItems})=>{
+const TrItem:React.FC<TrItemProps> = ({wasUpdated,serializedXlsxItems,updateMatchItems,deleteMatchItem,item,warnings,matchItems})=>{
     const {codigo,descripcion,subCosto,costo,rentabilidad,precio,iva,final,currentProduct,table} = item;
     const xlsxTitle = serializedXlsxItems[descripcion]?serializedXlsxItems[descripcion].titulo??'':'';  
 
     const [warning, setWarning] = useState<{codigo:string,title:boolean,price:boolean}>({codigo,title:false,price:false});
-    const [wasUpdated,setWasUpdated] = useState<{codigo:string,status:number}>({codigo,status:0})
 
     useEffect(()=>{
       if(warnings.length){
@@ -56,17 +56,18 @@ const TrItem:React.FC<TrItemProps> = ({serializedXlsxItems,updateMatchItems,dele
     )
 }
 
-interface TrItemsProps extends Omit<TrItemProps,'item'>{
+interface TrItemsProps extends Omit<Omit<TrItemProps,'wasUpdated'>,'item'>{
     page:number,
     pageSize:number,
     search:string,
+    wereUpdated:{codigo:string,status:number,table:'main'|'secondary'}[]
 }
 
 interface MatchItemWithTableAndCurrentProduct extends MatchItem {
     table:'main'|'secondary';
     currentProduct:Product;
 }
-const TrItems:React.FC<TrItemsProps> = ({page,pageSize,search,matchItems,warnings,serializedProducts,serializedXlsxItems,updateMatchItems,deleteMatchItem})=>{
+const TrItems:React.FC<TrItemsProps> = ({wereUpdated,page,pageSize,search,matchItems,warnings,serializedProducts,serializedXlsxItems,updateMatchItems,deleteMatchItem})=>{
 
     if(matchItems.main.length || matchItems.secondary.length){
         const allItems = Object.entries(matchItems).reduce((acc,[table,values])=>{
@@ -91,7 +92,8 @@ const TrItems:React.FC<TrItemsProps> = ({page,pageSize,search,matchItems,warning
 
         let currentTable = '';
         return pageItems.map((item,index)=>{
-            const {table} = item;
+            const {table,codigo} = item;
+            const wasUpdated = wereUpdated.length?wereUpdated.filter(({codigo:codigoUpdated,table:tableUpdated})=>(tableUpdated==table&&codigoUpdated==codigo))[0]:{codigo,table,status:0};
             let tableTr = <Fragment key={table}></Fragment>;
             if(table != currentTable){
                 currentTable = table;
@@ -101,6 +103,7 @@ const TrItems:React.FC<TrItemsProps> = ({page,pageSize,search,matchItems,warning
             <Fragment key={index}>
                 {tableTr}
                 <TrItem 
+                wasUpdated={wasUpdated}
                 matchItems={matchItems}
                 warnings={warnings} 
                 item={item} 

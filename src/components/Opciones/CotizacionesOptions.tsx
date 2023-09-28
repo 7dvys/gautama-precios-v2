@@ -53,7 +53,7 @@ const CotizacionesOptions:React.FC = ()=>{
                 <h3>Cotizaciones</h3>
                 <select ref={cotizacionesRef} name="cotizaciones">
                     {Object.entries(cotizaciones).map(([key,value],index)=>(
-                        <option key={index} value={key}>{key}:{value}</option>
+                        <option key={index} value={key}>{key}: {value}</option>
                     ))}
                 </select>
                 <button onClick={modifyHandler}>modificar</button>

@@ -4,7 +4,7 @@ import { ConfigPanel } from "./ConfigPanel";
 import { Config } from "@/types/Precios";
 import { useState,useContext, useEffect } from "react";
 import { rootContext } from "@/context";
-import { InformationPanel } from "./InformationPanel";
+import { InformationPanel } from "./ConfigPanel/InformationPanel";
 import { MatchTable } from "./MatchTable";
 
 

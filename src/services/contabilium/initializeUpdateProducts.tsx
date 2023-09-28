@@ -9,8 +9,8 @@ const initializeUpdateProducts = ({token}:{token:Token})=>{
         const {getCotizaciones} = await initializeCotizaciones()
         const serializedVendors = serializeArray(vendors,'Id')
 
-        Object.entries(matchItems).forEach(([table,tableMatchItems])=>{
-            tableMatchItems.forEach(({codigo,costo,rentabilidad,precio,iva,final})=>{
+        const [mainUpdates,secondaryUpdates] = Object.entries(matchItems).map(([table,tableMatchItems])=>{
+            return tableMatchItems.map(({codigo,costo,rentabilidad,precio,iva,final})=>{
                 const cotizacionPrecio = getCotizaciones()[config.cotizacion]
                 const cbProduct = serializedProducts[(table as 'main'|'secondary')][codigo]
                 const {idProveedor,cotizacion} = config;
@@ -49,24 +49,26 @@ const initializeUpdateProducts = ({token}:{token:Token})=>{
                     body:JSON.stringify(newProduct)
                 }
 
-                // return [fetch(endpoint,fetchConfig),codigo];
-                fetch(endpoint,fetchConfig).then(response=>{
-                    if(!response.ok) response.text().then(error=>{console.log(error)})
-                })
+                return [fetch(endpoint,fetchConfig),codigo,table];
+                // fetch(endpoint,fetchConfig).then(response=>{
+                    
+                // }).catch(error=>{console.log({error,codigo})})
                 // console.log({fetchConfig,endpoint,table,newObservacionesEncoded})
             })
         })
         
         alert('Todos los productos enviados.');
-        // const promises = updatedPromises.map(([promise])=>(promise as Promise<Response>))
+        const updatePromises = [...mainUpdates,...secondaryUpdates];
+        const promises = updatePromises.map(([promise])=>(promise as Promise<Response>))
 
-        // const updates= await Promise.all(promises).then(updatesResponses=>{
-        //     return updatesResponses.map((updateResponse,index)=>{
-        //         const [_,codigo] = updatedPromises[index];
-        //         return updateResponse.ok?{codigo,status:1}:{codigo,status:2};
-        //     })
-        // })
-        // return updates as {codigo:string,status:number}[];
+        const updates= await Promise.all(promises).then(updatesResponses=>{
+            return updatesResponses.map((updateResponse,index)=>{
+                const [_,codigo,table] = updatePromises[index];
+                if(!updateResponse.ok) updateResponse.text().then(error=>{console.log({error,codigo})})
+                return updateResponse.ok?{codigo,table,status:1}:{codigo,table,status:2};
+            })
+        })
+        return updates as {codigo:string,status:number,table:'main'|'secondary'}[];
     }
     return {updateProducts};
 }

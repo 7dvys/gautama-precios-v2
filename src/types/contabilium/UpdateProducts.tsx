@@ -8,4 +8,9 @@ export interface UpdateProductsProps{
     vendors:Vendor[]
     // serializedXlsxItems:MutableRefObject<Record<string,XlsxProduct>>;
 }
-export type UpdateProducts = ({ matchItems, serializedProducts, config }: UpdateProductsProps) => Promise<void>
+
+export type UpdateProducts = ({ matchItems, serializedProducts, config, vendors }: UpdateProductsProps) =>  Promise<{
+    codigo: string;
+    status: number;
+    table:'main'|'secondary';
+}[]>

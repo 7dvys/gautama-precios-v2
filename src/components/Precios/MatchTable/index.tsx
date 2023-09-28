@@ -26,7 +26,7 @@ const MatchTable:React.FC<MatchTableProps> = ({products,config,vendors,updatePro
     
     const [warnings,setWarnings] = useState<Warnings>([])
     const warningsCount = useRef<WarningsCount>({main:{title:0,price:0},secondary:{title:0,price:0}})
-    // const [wereUpdated,setWereUpdated] = useState<{codigo:string,status:number}[]>([]);
+    const [wereUpdated,setWereUpdated] = useState<{codigo:string,status:number,table:'main'|'secondary'}[]>([]);
     const [movimientosDb,setMovimientosDb] = useState<Database<Movement>>({} as Database<Movement>);
 
     useEffect(()=>{
@@ -37,7 +37,7 @@ const MatchTable:React.FC<MatchTableProps> = ({products,config,vendors,updatePro
     
     useEffect(()=>{
         clearMatchItems();
-        // setWereUpdated([]);
+        setWereUpdated([]);
         serializedXlsxItems.current=(serializeXlsxItems(config));
         if((accountType == ACCOUNT_TYPE.main && main.length && secondary.length)||(accountType == ACCOUNT_TYPE.secondary && secondary.length)){
             matchXlsxAndCbProducts();
@@ -52,8 +52,9 @@ const MatchTable:React.FC<MatchTableProps> = ({products,config,vendors,updatePro
 
     const aceptarHandler = ()=>{
         if(updateProducts && (matchItems.main.length || matchItems.secondary.length) && confirm('[!] seguro que desea ACEPTAR?'))
-        updateProducts({matchItems,config,serializedProducts,vendors}).then(()=>{
-            // setWereUpdated(updates);
+        updateProducts({matchItems,config,serializedProducts,vendors}).then((updates)=>{
+    // console.log(updates)
+            setWereUpdated(updates);
             const {movimiento} = createMovementToDb({matchItems,vendors,config,serializedProducts})
             // console.log(movimiento)
             movimientosDb.add([movimiento]);
@@ -73,7 +74,7 @@ const MatchTable:React.FC<MatchTableProps> = ({products,config,vendors,updatePro
   
     return (
     <div className={styles.matchTable}>
-        <div className={`${styles.tableOptions} box`}>
+        <div className={`${styles.tableOptions} box sticky`}>
             <TableControl search={search} setSearch={setSearch} page={page} setPage={setPage} pageSize={pageSize} setPageSize={setPageSize} matchItems={matchItems} warningsCount={warningsCount.current} aceptarHandler={aceptarHandler} cancelarHandler={cancelarHandler}/>
         </div>
         <div className={`${styles.tableContainer} box`}> 
@@ -86,7 +87,7 @@ const MatchTable:React.FC<MatchTableProps> = ({products,config,vendors,updatePro
                     </tr>
                 </thead>
                 <tbody>
-                    <TrItems page={page} pageSize={pageSize} search={search} updateMatchItems={updateMatchItems} deleteMatchItem={deleteMatchItem} matchItems={matchItems} warnings={warnings} serializedProducts={serializedProducts} serializedXlsxItems={serializedXlsxItems.current}/>
+                    <TrItems wereUpdated={wereUpdated} page={page} pageSize={pageSize} search={search} updateMatchItems={updateMatchItems} deleteMatchItem={deleteMatchItem} matchItems={matchItems} warnings={warnings} serializedProducts={serializedProducts} serializedXlsxItems={serializedXlsxItems.current}/>
                 </tbody>
             </table>
         </div>

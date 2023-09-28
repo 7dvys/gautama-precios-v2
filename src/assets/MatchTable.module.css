@@ -70,7 +70,6 @@
 /* TABLE CONTAINER */
 .tableContainer{
     overflow: scroll;
-    max-width: 86vw;
 }
 
 .table{
