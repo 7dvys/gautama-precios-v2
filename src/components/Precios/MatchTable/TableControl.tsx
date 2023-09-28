@@ -1,8 +1,22 @@
 import styles from '@/assets/MatchTable.module.css'
 import { MatchItems, WarningsCount } from '@/types/Precios'
+import { ChangeEvent, Dispatch, SetStateAction, useEffect } from 'react';
 
 
-export const TableControl:React.FC<{matchItems:MatchItems,warningsCount:WarningsCount,cancelarHandler:()=>void,aceptarHandler:()=>void}> = ({matchItems,warningsCount,cancelarHandler,aceptarHandler})=>{
+interface TableControlProps{
+    matchItems:MatchItems,
+    warningsCount:WarningsCount,
+    cancelarHandler:()=>void,
+    aceptarHandler:()=>void,
+    page:number,
+    setPage:Dispatch<SetStateAction<number>>;
+    pageSize:number,
+    setPageSize:Dispatch<SetStateAction<number>>
+    search:string,
+    setSearch:Dispatch<SetStateAction<string>>
+}
+
+export const TableControl:React.FC<TableControlProps> = ({matchItems,warningsCount,cancelarHandler,aceptarHandler,page,setPage,pageSize,setPageSize,search,setSearch})=>{
     const {coincidenciasTitle,coincidenciasCount} = (()=>{
         const {main,secondary} = matchItems;
         const coincidenciasTitle = `rpm 764: ${main.length}\nrpm 925: ${secondary.length}`;
@@ -21,16 +35,45 @@ export const TableControl:React.FC<{matchItems:MatchItems,warningsCount:Warnings
         return {disonantes,dispares};
     })()
 
+    // Search and Pagination
+    const searchChangeHandler = (event:ChangeEvent<HTMLInputElement>)=>{
+        const {value} = event.target as HTMLInputElement
+        setSearch(value);
+    }
+    
+    const itemsCount = (matchItems.main.length+matchItems.secondary.length)??1;
+    const aditionalPage = itemsCount%pageSize?1:0
+    const pages = itemsCount?Math.trunc(itemsCount/pageSize)+aditionalPage:1;
 
+    const prevPageHandler = ()=>{
+        if(page != 1)
+        setPage(page=>page-1);
+    }
+
+    const nextPageHandler = ()=>{
+        if(page != pages)
+        setPage(page=>page+1);
+    }
+
+    const changePageSizeHandler = ()=>{
+        const  newPageSize = Number(prompt('nuevo tamano de pagina',pageSize.toString()));
+        if(isNaN(newPageSize) || !newPageSize)
+        setPageSize(pageSize)
+        else setPageSize(newPageSize)
+    }
+
+    useEffect(()=>{
+        setPage(1)
+    },[pageSize])
     
     return (
         <>
             <div className={styles.control}>
-                <input placeholder='buscar' type="text" />
+                <input onChange={searchChangeHandler} placeholder='buscar' type="text" />
                 <div className='flex'>
-                    <span>❮</span>
-                    <span>pagina 1 de 10</span>
-                    <span>❯</span>
+                    <span onClick={prevPageHandler}>❮</span>
+                    <span onClick={changePageSizeHandler}>pagina {page} de {pages}</span>
+                    <span onClick={nextPageHandler}>❯</span>
                 </div>
             </div>
                 

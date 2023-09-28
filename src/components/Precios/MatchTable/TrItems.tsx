@@ -1,52 +1,21 @@
 'use client'
-import { DeleteMatchItem, MatchItem,MatchItems,SerializedProduct,SerializedProducts,SerializedXlsxItems,UpdateMatchItems,Warnings } from "@/types/Precios";
+import { DeleteMatchItem, MatchItem,MatchItems,SerializedProducts,SerializedXlsxItems,UpdateMatchItems,Warnings } from "@/types/Precios";
 import { Fragment, useEffect,useState } from "react";
 import styles from '@/assets/MatchTable.module.css'
-import { ACCOUNT_TYPE } from "@/constants";
+import { Product } from "@/types/contabilium";
 
-interface TrItemsProps {
+interface TrItemProps{
     matchItems:MatchItems;
     warnings:Warnings;
     serializedXlsxItems:SerializedXlsxItems;
     serializedProducts:SerializedProducts;
     updateMatchItems:UpdateMatchItems;
     deleteMatchItem:DeleteMatchItem;
+    item:MatchItemWithTableAndCurrentProduct;
 }
 
-const TrItems:React.FC<TrItemsProps> = ({matchItems,warnings,serializedProducts,serializedXlsxItems,updateMatchItems,deleteMatchItem})=>{
-    if(matchItems.main.length || matchItems.secondary.length)
-    return Object.keys(matchItems).map((table,index)=>(
-
-        <Fragment key={index}>
-            {matchItems[(table as 'main'|'secondary')].length?<tr key={table}><td colSpan={7}>{table==ACCOUNT_TYPE.main?'RPM 764':'RPM 925'}</td><td>{''}</td></tr>:''}
-            {matchItems[(table as 'main'|'secondary')].map((item,index)=>(
-                <TrItem 
-                matchItems={matchItems}
-                table={table as 'main'|'secondary'} 
-                key={index} warnings={warnings} 
-                item={item} 
-                serializedProducts={serializedProducts} 
-                serializedXlsxItems={serializedXlsxItems} 
-                updateMatchItems={updateMatchItems} 
-                deleteMatchItem={deleteMatchItem}/>
-            ))}
-        </Fragment>
-        )
-    ) 
-    else return (<tr><td colSpan={7}>sin articulos...</td><td>{}</td></tr>)
-}
-
-interface TrItemProps extends TrItemsProps{
-    updateMatchItems:UpdateMatchItems;
-    deleteMatchItem:DeleteMatchItem;
-    item:MatchItem;
-    table:'main'|'secondary';
-    // wereUpdated:{codigo:string,status:number}[]
-}
-
-const TrItem:React.FC<TrItemProps> = ({table,serializedProducts,serializedXlsxItems,updateMatchItems,deleteMatchItem,item,warnings,matchItems})=>{
-    const {codigo,descripcion,subCosto,costo,rentabilidad,precio,iva,final} = item;
-    const currentProduct = serializedProducts[table][codigo]
+const TrItem:React.FC<TrItemProps> = ({serializedXlsxItems,updateMatchItems,deleteMatchItem,item,warnings,matchItems})=>{
+    const {codigo,descripcion,subCosto,costo,rentabilidad,precio,iva,final,currentProduct,table} = item;
     const xlsxTitle = serializedXlsxItems[descripcion]?serializedXlsxItems[descripcion].titulo??'':'';  
 
     const [warning, setWarning] = useState<{codigo:string,title:boolean,price:boolean}>({codigo,title:false,price:false});
@@ -58,11 +27,6 @@ const TrItem:React.FC<TrItemProps> = ({table,serializedProducts,serializedXlsxIt
         setWarning(newWarning);
       }
 
-    //   setWasUpdated({codigo,status:0})
-    //   if(wereUpdated.length){
-    //     const newWasUpdated = wereUpdated.filter(({codigo:fCodigo})=>(fCodigo == codigo))[0] ?? {codigo,status:0};
-    //     setWasUpdated(newWasUpdated);
-    //   }
     },[matchItems,warnings])
 
     const {Nombre:cbTitle,PrecioFinal} = currentProduct;
@@ -90,6 +54,66 @@ const TrItem:React.FC<TrItemProps> = ({table,serializedProducts,serializedXlsxIt
             <td className={styles.delete} onClick={deleteItemHandler}>eliminar</td>
         </tr>
     )
+}
+
+interface TrItemsProps extends Omit<TrItemProps,'item'>{
+    page:number,
+    pageSize:number,
+    search:string,
+}
+
+interface MatchItemWithTableAndCurrentProduct extends MatchItem {
+    table:'main'|'secondary';
+    currentProduct:Product;
+}
+const TrItems:React.FC<TrItemsProps> = ({page,pageSize,search,matchItems,warnings,serializedProducts,serializedXlsxItems,updateMatchItems,deleteMatchItem})=>{
+
+    if(matchItems.main.length || matchItems.secondary.length){
+        const allItems = Object.entries(matchItems).reduce((acc,[table,values])=>{
+            const items = values.map(item=>{
+                const {codigo} = item;
+                const currentProduct = serializedProducts[(table as 'main'|'secondary')][codigo]
+                return {...item,table:(table as 'main'|'secondary'),currentProduct}
+            })
+            return acc.concat(items);
+        },[] as MatchItemWithTableAndCurrentProduct[])
+        .filter(({currentProduct})=>{
+            const {Nombre} = currentProduct;
+            return search.length?Nombre.toLowerCase().includes(search.toLowerCase()):true;
+        })
+
+        // Calcular el índice de inicio y fin para la paginación
+        const startIndex = (page - 1) * pageSize;
+        const endIndex = startIndex + pageSize;
+
+        // Obtener los elementos para la página actual
+        const pageItems = allItems.slice(startIndex, endIndex);
+
+        let currentTable = '';
+        return pageItems.map((item,index)=>{
+            const {table} = item;
+            let tableTr = <Fragment key={table}></Fragment>;
+            if(table != currentTable){
+                currentTable = table;
+                tableTr = <tr key={table}><td colSpan={7}>{table=='main'?'RPM 764':'RPM 925'}</td><td>{}</td></tr>
+            }
+            return (
+            <Fragment key={index}>
+                {tableTr}
+                <TrItem 
+                matchItems={matchItems}
+                warnings={warnings} 
+                item={item} 
+                serializedProducts={serializedProducts} 
+                serializedXlsxItems={serializedXlsxItems} 
+                updateMatchItems={updateMatchItems} 
+                deleteMatchItem={deleteMatchItem}
+                />
+            </Fragment>
+            )
+        })
+
+    } else return (<tr><td colSpan={7}>sin articulos...</td><td>{}</td></tr>)
 }
 
 export {TrItems}

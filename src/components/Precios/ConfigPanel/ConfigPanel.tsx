@@ -7,6 +7,7 @@ import { useManageDisabled } from "@/hooks/useManageDisabled";
 import { letterToNumber } from "@/utils";
 import { ACCOUNT_TYPE, LOCALSTORAGE_KEYS } from "@/constants";
 import * as XLSX from 'xlsx';
+import { InformationPanel } from "../InformationPanel";
 
 const ConfigPanel:React.FC<ConfigPanelProps> = ({config,setConfig,vendors,products})=>{
 
@@ -81,10 +82,12 @@ const ConfigPanel:React.FC<ConfigPanelProps> = ({config,setConfig,vendors,produc
         (accountType == ACCOUNT_TYPE.main && main.length && secondary.length)||(accountType == ACCOUNT_TYPE.secondary && secondary.length)?setEnabled():setDisabled();            
     },[products])
 
-    // Pages and Filter searchs
-    const [page,setPage] = useState<number>(0);
+
 
     return (
+        <>
+        <InformationPanel products={products}/>
+
         <article className="box formBox">
             <h3>Configuracion</h3>
 
@@ -124,6 +127,7 @@ const ConfigPanel:React.FC<ConfigPanelProps> = ({config,setConfig,vendors,produc
                 <button ref={refAceptButton} onClick={confirmHandler}>aceptar</button>
             </div>
         </article>
+        </>
     )
 }
 

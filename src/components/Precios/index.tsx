@@ -29,13 +29,10 @@ const Precios:React.FC = ()=>{
     }
 
     const [config,setConfig] = useState<Config>(initialConfig);
-
-    useEffect(()=>{console.log(products)},[products])
     
     return (
         <>
             <aside className="flex flex-column flex-gap">
-            <InformationPanel products={products}/>
             <ConfigPanel config={config} setConfig={setConfig} products={products} vendors={vendors}/>
             </aside>
             <MatchTable products={products} config={config} vendors={vendors} updateProducts={updateProducts} />

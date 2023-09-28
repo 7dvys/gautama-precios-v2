@@ -17,6 +17,14 @@
     gap: .5rem;
 }
 
+.tableOptions>.control>div>span{
+    cursor: pointer;
+}
+
+.tableOptions>.control>div>span:hover{
+    background-color: var(--grey-beige);
+}
+
 .tableOptions>.control>input{
     display: flex;
     border: 1px solid var(--grey-beige);

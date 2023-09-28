@@ -33,6 +33,10 @@ const useMatchItems = ({products,config}:{products:Products;config:Config})=>{
         setMatchItems({main,secondary});
     }
 
+    const updateExchangeRate = ({products}:{products:Products})=>{
+        
+    }
+
     const updateMatchItems = ({codigoItem,nuevoFinal,table}:{codigoItem:string,nuevoFinal:number,table:'main'|'secondary'})=>{
 
         const newMatchItems = matchItems[table].map((matchItem)=>{

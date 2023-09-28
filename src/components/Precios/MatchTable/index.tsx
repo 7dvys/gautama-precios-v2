@@ -52,7 +52,7 @@ const MatchTable:React.FC<MatchTableProps> = ({products,config,vendors,updatePro
 
     const aceptarHandler = ()=>{
         if(updateProducts && (matchItems.main.length || matchItems.secondary.length) && confirm('[!] seguro que desea ACEPTAR?'))
-        updateProducts({matchItems,config,serializedProducts}).then(()=>{
+        updateProducts({matchItems,config,serializedProducts,vendors}).then(()=>{
             // setWereUpdated(updates);
             const {movimiento} = createMovementToDb({matchItems,vendors,config,serializedProducts})
             console.log(movimiento)
@@ -65,11 +65,16 @@ const MatchTable:React.FC<MatchTableProps> = ({products,config,vendors,updatePro
         clearMatchItems();
     }
 
+    // Pages and Filter searchs
+    const [page,setPage] = useState<number>(1);
+    const [pageSize,setPageSize] = useState<number>(400);
+    const [search,setSearch] = useState<string>('');
+
   
     return (
     <div className={styles.matchTable}>
         <div className={`${styles.tableOptions} box`}>
-            <TableControl matchItems={matchItems} warningsCount={warningsCount.current} aceptarHandler={aceptarHandler} cancelarHandler={cancelarHandler}/>
+            <TableControl search={search} setSearch={setSearch} page={page} setPage={setPage} pageSize={pageSize} setPageSize={setPageSize} matchItems={matchItems} warningsCount={warningsCount.current} aceptarHandler={aceptarHandler} cancelarHandler={cancelarHandler}/>
         </div>
         <div className={`${styles.tableContainer} box`}> 
             <table className={`${styles.table}`}>
@@ -81,7 +86,7 @@ const MatchTable:React.FC<MatchTableProps> = ({products,config,vendors,updatePro
                     </tr>
                 </thead>
                 <tbody>
-                    <TrItems updateMatchItems={updateMatchItems} deleteMatchItem={deleteMatchItem} matchItems={matchItems} warnings={warnings} serializedProducts={serializedProducts} serializedXlsxItems={serializedXlsxItems.current}/>
+                    <TrItems page={page} pageSize={pageSize} search={search} updateMatchItems={updateMatchItems} deleteMatchItem={deleteMatchItem} matchItems={matchItems} warnings={warnings} serializedProducts={serializedProducts} serializedXlsxItems={serializedXlsxItems.current}/>
                 </tbody>
             </table>
         </div>

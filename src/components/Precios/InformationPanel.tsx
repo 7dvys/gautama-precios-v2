@@ -1,11 +1,20 @@
 import { ACCOUNT_TYPE, LOCALSTORAGE_KEYS } from "@/constants";
-import { Product } from "@/types/contabilium";
+import { Products, SerializedProducts } from "@/types/Precios";
+import { serializeArray } from "@/utils";
+import { useEffect } from "react";
 
-const InformationPanel:React.FC<{products:{main:Product[],secondary:Product[]}}> = ({products})=>{
+const InformationPanel:React.FC<{products:Products}> = ({products})=>{
     
     // update dolar :3
     const accountType = typeof window != 'undefined'?localStorage.getItem(LOCALSTORAGE_KEYS.accountType):ACCOUNT_TYPE.main;
+    
+    
+    const serializedProducts:SerializedProducts = {
+        main:serializeArray(products.main,'Codigo'),
+        secondary:serializeArray(products.secondary,'Codigo')
+    };
 
+    // useEffect(,[])
 
     return (
     <article className="box formBox">
