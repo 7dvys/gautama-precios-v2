@@ -14,7 +14,7 @@ interface Config{
     isFinal:number,
     modificacion:number,
     modificacionAfecta:number,
-    xlsxItems:XlsxProduct[],
+    xlsxItems:(string|number)[][],
     cotizacion:string;
 }
 

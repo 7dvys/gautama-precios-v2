@@ -14,8 +14,8 @@ const setConfigChangeHandler = ({refConfig,setDisabled,xlsxWorker,refSelectSheet
         const {name,value} = event.target;
         
         if (name in refConfig.current)
-        refConfig.current[name as keyof Omit<Config,'xlsxItems'>] = (name == 'colCodigo' || name == 'colCosto' || name =='colTitulo')?letterToNumber(value):Number(value);
-    
+        (refConfig.current[name as keyof Omit<Config,'xlsxItems'>] as number) = (name == 'colCodigo' || name == 'colCosto' || name =='colTitulo')?letterToNumber(value):Number(value);
+ 
         if (name == 'file' && (event as ChangeEvent<HTMLInputElement>).target.files){
             setDisabled();
             xlsxWorker.current.postMessage({task:'read',attach:((event as ChangeEvent<HTMLInputElement>).target.files as FileList)[0]});

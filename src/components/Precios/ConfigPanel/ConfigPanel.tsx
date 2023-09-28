@@ -58,7 +58,6 @@ const ConfigPanel:React.FC<ConfigPanelProps> = ({config,setConfig,vendors,produc
         if(!error){
             setConfigRef([cotizacionRef.current,vendorRef.current,vendorFilterRef.current,columnaCodigoRef.current,columnaCostoRef.current,columnaTituloRef.current,isFinalRef.current,withTituloRef.current,ivaRef.current,ivaIncludedRef.current,modifyRef.current,modifyAffectRef.current,profitRef.current] as {name:string,value:string}[])
             setConfig({...config,...refConfig.current});
-            console.log(refConfig.current)
         } else alert(error);
 
     }

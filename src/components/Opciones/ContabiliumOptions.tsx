@@ -70,8 +70,10 @@ const ContabiliumOptions:React.FC = ()=>{
     const accountTypeRef = useRef<HTMLSelectElement>(null)
 
     const updateTypeAccount = ()=>{
-        localStorage.setItem(LOCALSTORAGE_KEYS.accountType,(accountTypeRef.current as HTMLSelectElement).value)
-        location.reload();
+        if(isClient){
+            localStorage.setItem(LOCALSTORAGE_KEYS.accountType,(accountTypeRef.current as HTMLSelectElement).value)
+            location.reload();
+        }
     }
 
    
@@ -97,7 +99,7 @@ const ContabiliumOptions:React.FC = ()=>{
             </div>
             <div className="formBox box">
                 <h3>Tipo de cuenta</h3>
-                <select name="accountType" ref={accountTypeRef} defaultValue={localStorage.getItem(LOCALSTORAGE_KEYS.accountType)??ACCOUNT_TYPE.secondary}>
+                <select name="accountType" ref={accountTypeRef} defaultValue={(isClient&&localStorage.getItem(LOCALSTORAGE_KEYS.accountType))?localStorage.getItem(LOCALSTORAGE_KEYS.accountType)??ACCOUNT_TYPE.main:ACCOUNT_TYPE.main}>
                     <option value={ACCOUNT_TYPE.main}>primaria</option>
                     <option value={ACCOUNT_TYPE.secondary}>secundaria</option>
                 </select>

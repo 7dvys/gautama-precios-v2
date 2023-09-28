@@ -55,8 +55,8 @@ const MatchTable:React.FC<MatchTableProps> = ({products,config,vendors,updatePro
         updateProducts({matchItems,config,serializedProducts,vendors}).then(()=>{
             // setWereUpdated(updates);
             const {movimiento} = createMovementToDb({matchItems,vendors,config,serializedProducts})
-            console.log(movimiento)
-            // movimientosDb.add([movimiento]);
+            // console.log(movimiento)
+            movimientosDb.add([movimiento]);
         })
     }
 
