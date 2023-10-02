@@ -2,7 +2,7 @@
 
 import { ConfigPanel } from "./ConfigPanel";
 import { Config } from "@/types/Precios";
-import { useState,useContext, useEffect } from "react";
+import { useState,useContext } from "react";
 import { rootContext } from "@/context";
 import { MatchTable } from "./MatchTable";
 
@@ -29,7 +29,6 @@ const Precios:React.FC = ()=>{
     }
 
     const [config,setConfig] = useState<Config>(initialConfig);
-    useEffect(()=>{console.log(config)},[config])
     
     return (
         <>

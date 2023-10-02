@@ -24,16 +24,19 @@ const TrItem:React.FC<TrItemProps> = ({wasUpdated,serializedXlsxItems,updateMatc
     const [warning, setWarning] = useState<{codigo:string,title:boolean,price:boolean}>({codigo,title:false,price:false});
 
     useEffect(()=>{
+        
       if(warnings.length){
         const newWarning = warnings.filter(({codigo:wCodigo})=>(wCodigo == codigo))[0] ?? {codigo,title:false,price:false}
         setWarning(newWarning);
       }
 
+
     },[matchItems,warnings])
 
-    const {Nombre:cbTitle,PrecioFinal,Observaciones} = currentProduct;
+    const {Nombre:cbTitle,PrecioFinal,Observaciones,CostoInterno} = currentProduct;
     const decodedObservaciones = decoder(Observaciones) as Observaciones;
-    const finalAnteriorTitle = ['Iva','Rentabilidad','CostoInterno','Precio',].map((item:string)=>(`${item}:${(currentProduct as Record<string,any>)[item]}`)).join('\n')
+    const finalAnteriorTitle = ['Iva','Rentabilidad','CostoInterno','Precio',].map((item:string)=>(`${item}:${(currentProduct as Record<string,any>)[item]}`)).join('\n');
+    
 
     const updateItemHandler = ()=>{
         const nuevoFinal = Number(prompt('nuevo final',final.toString())??final)
@@ -51,7 +54,7 @@ const TrItem:React.FC<TrItemProps> = ({wasUpdated,serializedXlsxItems,updateMatc
             <td>{descripcion}</td>
             {/* <td>{decodedObservaciones.cotizacion?decodedObservaciones.cotizacion:'ars'}</td> */}
             <td className={warning.title?styles.warning:''} title={xlsxTitle}>{cbTitle.trim()}</td>
-            <td title={finalAnteriorTitle}>{PrecioFinal}</td>
+            <td title={`${finalAnteriorTitle}\n${decodedObservaciones.cotizacion?`Costo dolar: ${(CostoInterno/decodedObservaciones.cotizacionPrecio).toFixed(2)}`:''}`}>{PrecioFinal}</td>
             <td title={`subcosto: ${subCosto}+modificacion`}>{costo}</td>
             <td title={`precio: ${costo}+${rentabilidad}% (rentabilidad)`}>{precio}</td>
             <td className={`${warning.price?styles.warning:''} ${styles.final}`} onClick={updateItemHandler} title={`final: ${precio}+${iva}%(iva)`}>{final}</td>
