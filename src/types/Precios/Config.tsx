@@ -16,6 +16,7 @@ interface Config{
     modificacionAfecta:number,
     xlsxItems:(string|number)[][],
     cotizacion:string;
+    operacion:'precios'|'dolar'
 }
 
 export type {Config}

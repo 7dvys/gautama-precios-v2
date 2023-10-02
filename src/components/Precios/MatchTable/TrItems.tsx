@@ -1,8 +1,9 @@
 'use client'
-import { DeleteMatchItem, MatchItem,MatchItems,SerializedProducts,SerializedXlsxItems,UpdateMatchItems,Warnings } from "@/types/Precios";
+import { DeleteMatchItem, MatchItem,MatchItems,Observaciones,SerializedProducts,SerializedXlsxItems,UpdateMatchItems,Warnings } from "@/types/Precios";
 import { Fragment, useEffect,useState } from "react";
 import styles from '@/assets/MatchTable.module.css'
 import { Product } from "@/types/contabilium";
+import { simpleDataSerializer } from "@/utils/simpleDataSerializer";
 
 interface TrItemProps{
     matchItems:MatchItems;
@@ -16,6 +17,7 @@ interface TrItemProps{
 }
 
 const TrItem:React.FC<TrItemProps> = ({wasUpdated,serializedXlsxItems,updateMatchItems,deleteMatchItem,item,warnings,matchItems})=>{
+    const {encoder,decoder} = simpleDataSerializer()
     const {codigo,descripcion,subCosto,costo,rentabilidad,precio,iva,final,currentProduct,table} = item;
     const xlsxTitle = serializedXlsxItems[descripcion]?serializedXlsxItems[descripcion].titulo??'':'';  
 
@@ -29,7 +31,8 @@ const TrItem:React.FC<TrItemProps> = ({wasUpdated,serializedXlsxItems,updateMatc
 
     },[matchItems,warnings])
 
-    const {Nombre:cbTitle,PrecioFinal} = currentProduct;
+    const {Nombre:cbTitle,PrecioFinal,Observaciones} = currentProduct;
+    const decodedObservaciones = decoder(Observaciones) as Observaciones;
     const finalAnteriorTitle = ['Iva','Rentabilidad','CostoInterno','Precio',].map((item:string)=>(`${item}:${(currentProduct as Record<string,any>)[item]}`)).join('\n')
 
     const updateItemHandler = ()=>{
@@ -46,6 +49,7 @@ const TrItem:React.FC<TrItemProps> = ({wasUpdated,serializedXlsxItems,updateMatc
         <tr className={`${wasUpdated.status?wasUpdated.status==1?styles.updateOk:styles.updateFailed:''} ${styles.row}`}>
             <td>{codigo}</td>
             <td>{descripcion}</td>
+            {/* <td>{decodedObservaciones.cotizacion?decodedObservaciones.cotizacion:'ars'}</td> */}
             <td className={warning.title?styles.warning:''} title={xlsxTitle}>{cbTitle.trim()}</td>
             <td title={finalAnteriorTitle}>{PrecioFinal}</td>
             <td title={`subcosto: ${subCosto}+modificacion`}>{costo}</td>

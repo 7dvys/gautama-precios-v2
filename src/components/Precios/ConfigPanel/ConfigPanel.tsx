@@ -40,10 +40,11 @@ const ConfigPanel:React.FC<ConfigPanelProps> = ({config,setConfig,vendors,produc
             const {name,value}= element as {name:string,value:string}
             
             if (name in refConfig.current && name != 'cotizacion' && name != 'xlsxItems')
-            refConfig.current[name as keyof Omit<Omit<Config,'cotizacion'>,'xlsxItems'>] = (name == 'colCodigo' || name == 'colCosto' || name =='colTitulo')?letterToNumber(value):Number(value);
+            refConfig.current[name as keyof Omit<Omit<Omit<Config,'operacion'>,'cotizacion'>,'xlsxItems'>] = (name == 'colCodigo' || name == 'colCosto' || name =='colTitulo')?letterToNumber(value):Number(value);
 
             if(name == 'cotizacion')
             refConfig.current[name] = value;
+            refConfig.current['operacion']='precios';
         });
     }
     
@@ -85,9 +86,9 @@ const ConfigPanel:React.FC<ConfigPanelProps> = ({config,setConfig,vendors,produc
 
     return (
         <>
-        <InformationPanel products={products}/>
+        <InformationPanel config={config} setConfig={setConfig} products={products}/>
 
-        <article className="box formBox">
+        <article className="box formBox sticky">
             <h3>Configuracion</h3>
 
             <label>archivo</label>

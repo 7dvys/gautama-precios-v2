@@ -4,14 +4,13 @@ import { ConfigPanel } from "./ConfigPanel";
 import { Config } from "@/types/Precios";
 import { useState,useContext, useEffect } from "react";
 import { rootContext } from "@/context";
-import { InformationPanel } from "./ConfigPanel/InformationPanel";
 import { MatchTable } from "./MatchTable";
 
 
 const Precios:React.FC = ()=>{
     const {products,vendors,updateProducts} = useContext(rootContext);
 
-    const initialConfig = {
+    const initialConfig:Config = {
         idProveedor:0,
         discriminar:0,
         colCodigo:1,
@@ -25,10 +24,12 @@ const Precios:React.FC = ()=>{
         modificacion:0,
         modificacionAfecta:1,
         cotizacion:'blue',
-        xlsxItems:[]
+        xlsxItems:[],
+        operacion:'precios'
     }
 
     const [config,setConfig] = useState<Config>(initialConfig);
+    useEffect(()=>{console.log(config)},[config])
     
     return (
         <>

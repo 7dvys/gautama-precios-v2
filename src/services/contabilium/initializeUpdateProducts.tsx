@@ -2,10 +2,11 @@ import { Product,Token, UpdateProducts } from "@/types/contabilium";
 import { simpleDataSerializer } from "@/utils/simpleDataSerializer";
 import { initializeCotizaciones } from "../cotizaciones/initializeCotizaciones";
 import { serializeArray } from "@/utils";
+import { Observaciones } from "@/types/Precios";
 
 const initializeUpdateProducts = ({token}:{token:Token})=>{
     const updateProducts:UpdateProducts = async ({matchItems,serializedProducts,config,vendors})=>{
-        const {encoder}=simpleDataSerializer();
+        const {encoder,decoder}=simpleDataSerializer();
         const {getCotizaciones} = await initializeCotizaciones()
         const serializedVendors = serializeArray(vendors,'Id')
 
@@ -14,14 +15,16 @@ const initializeUpdateProducts = ({token}:{token:Token})=>{
                 const cotizacionPrecio = getCotizaciones()[config.cotizacion]
                 const cbProduct = serializedProducts[(table as 'main'|'secondary')][codigo]
                 const {idProveedor,cotizacion} = config;
-                const {Id,Tipo,Estado} = cbProduct;
+                const {Id,Tipo,Estado,Observaciones} = cbProduct;
                 const estado = Estado == 'Activo'?'A':'I';
                 const tipo = Tipo=='Producto'?'P':'C';
 
-                const newObservaciones = {
+                const {proveedor:prevVendor} = decoder(Observaciones) as Observaciones
+
+                const newObservaciones:Observaciones = { 
                     ultActualizacion:new Date().toLocaleDateString('es-ar'),
-                    proveedor:serializedVendors[idProveedor].NombreFantasia?serializedVendors[idProveedor].NombreFantasia:serializedVendors[idProveedor].RazonSocial,
                     cotizacion:cotizacion,
+                    proveedor:!idProveedor?prevVendor:serializedVendors[idProveedor].NombreFantasia?serializedVendors[idProveedor].NombreFantasia:serializedVendors[idProveedor].RazonSocial,
                     cotizacionPrecio:cotizacionPrecio
                 }
 
@@ -35,9 +38,10 @@ const initializeUpdateProducts = ({token}:{token:Token})=>{
                     Iva:iva,
                     Tipo:tipo,
                     Estado:estado,
-                    CodigoBarras:idProveedor.toString(),
                     Observaciones:newObservacionesEncoded
                 }
+
+                if(idProveedor) newProduct.CodigoBarras = idProveedor.toString();
 
                 const endpoint ="https://rest.contabilium.com/api/conceptos/?id="+Id
                 const fetchConfig = {
