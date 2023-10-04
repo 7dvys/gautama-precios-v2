@@ -19,15 +19,18 @@ const Movimientos:React.FC = ()=>{
   },[])
   return (
     <>
-        {movimientos.map((movimiento,index)=>(
-            <div key={index}>
+      <main className="flex-column">
+
+        {movimientos.reverse().map((movimiento,index)=>(
+          <div className="box" key={index}>
                 <ul>
                     {Object.entries(movimiento).map(([key,value],index)=>(
-                        <li key={index}>{key+value}</li>
-                    ))}
+                      <li  key={index}>{key+value}</li>
+                      ))}
                 </ul>
             </div>
         ))}
+      </main>
     </>
   )}
 
