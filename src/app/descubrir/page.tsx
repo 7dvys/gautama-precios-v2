@@ -1,12 +1,12 @@
-import { Herramientas } from "@/components/Herramientas";
+import { Descubrir } from "@/components/Descubrir";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
-    title: 'Herramientas',
+    title: 'Descubrir',
 }
 
 const HerramientasPage:React.FC = ()=>{
-    return (<><Herramientas/></>)
+    return <Descubrir/>
 }
 
 export default HerramientasPage

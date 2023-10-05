@@ -19,7 +19,7 @@ const ConfigPanel:React.FC<ConfigPanelProps> = ({config,setConfig,vendors,produc
     const accountType = typeof window != 'undefined'?localStorage.getItem(LOCALSTORAGE_KEYS.accountType):ACCOUNT_TYPE.main;
     
     const xlsxWorker = useRef<Worker>({} as Worker);
-    const {initializateWorker} = initializateXlsxWorker({setXlsxWorkBook,refConfig,setEnabled,xlsxWorker});
+    const {initializateWorker} = initializateXlsxWorker({xlsxWorker});
 
     const cotizacionRef = useRef<HTMLSelectElement>(null);
     const vendorRef = useRef<HTMLSelectElement>(null);
@@ -74,7 +74,11 @@ const ConfigPanel:React.FC<ConfigPanelProps> = ({config,setConfig,vendors,produc
     }
 
     useEffect(()=>{
-        initializateWorker();
+        const readCallback = (xlsxWorkBook:XLSX.WorkBook)=>{setXlsxWorkBook(xlsxWorkBook)};
+        const sheetToJsonCallback = (xlsxItems:any)=>{refConfig.current.xlsxItems = xlsxItems}
+        const onMessageCallback = ()=>{setEnabled()}
+
+        initializateWorker({readCallback,sheetToJsonCallback,onMessageCallback});
     })
 
     useEffect(()=>{

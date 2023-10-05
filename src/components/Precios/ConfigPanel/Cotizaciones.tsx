@@ -15,6 +15,7 @@ const Cotizaciones:React.FC<{cotizacionRef:RefObject<HTMLSelectElement>}> = ({co
         <>
             <label>cotizacion</label>
             <select ref={cotizacionRef} name="cotizacion">
+                <option value="default">default</option>1
                 {Object.entries(cotizaciones).map(([key,value])=>(
                     <option key={key} value={key}>{key} ${value}</option>
                 ))}

@@ -23,7 +23,7 @@ const Precios:React.FC = ()=>{
         isFinal:0,
         modificacion:0,
         modificacionAfecta:1,
-        cotizacion:'blue',
+        cotizacion:'default',
         xlsxItems:[],
         operacion:'precios'
     }

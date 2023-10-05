@@ -19,11 +19,11 @@ const initializeUpdateProducts = ({token}:{token:Token})=>{
                 const estado = Estado == 'Activo'?'A':'I';
                 const tipo = Tipo=='Producto'?'P':'C';
 
-                const {proveedor:prevVendor} = decoder(Observaciones) as Observaciones
+                const {proveedor:prevVendor,cotizacion:prevCotizacion} = decoder(Observaciones) as Observaciones
 
                 const newObservaciones:Observaciones = { 
                     ultActualizacion:new Date().toLocaleDateString('es-ar'),
-                    cotizacion:cotizacion,
+                    cotizacion:cotizacion!='default'?cotizacion:prevCotizacion,
                     proveedor:!idProveedor?prevVendor:serializedVendors[idProveedor].NombreFantasia?serializedVendors[idProveedor].NombreFantasia:serializedVendors[idProveedor].RazonSocial,
                     cotizacionPrecio:cotizacionPrecio
                 }
