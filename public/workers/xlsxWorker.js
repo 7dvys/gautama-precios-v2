@@ -5,11 +5,11 @@ importScripts('https://unpkg.com/string-similarity/umd/string-similarity.min.js'
 // La biblioteca xlsx se ha cargado completamente//
 
 
-const compareTitles = ({xlsxTitle,cbTitle})=>{
-    xlsxTitle = xlsxTitle?xlsxTitle.toString():''
-    const similaryRate =  stringSimilarity.compareTwoStrings('what!', 'who?');
-    const [rateWords,rateNumbers,rateNumbersAndWords] = [/[^a-zA-Z]/g,/[^0-9]/g,/[^a-zA-Z0-9]/g].map((regex)=>{
-        const [xlsxTitleTokenized,titleTokenized] = [xlsxTitle,cbTitle].map(title=>title.split(/[\s\-Xx]+/).map(word=>(word.replace(regex, ''))));
+const compareTitles = ({stringA,stringB})=>{
+    stringA = stringA?stringA.toString():''
+    const similaryRate =  stringSimilarity.compareTwoStrings(stringA,stringB);
+    const [rateWords,rateNumbers,rateNumbersAndWords] = [/[^stringA-zA-Z]/g,/[^0-9]/g,/[^a-zA-Z0-9]/g].map((regex)=>{
+        const [xlsxTitleTokenized,titleTokenized] = [stringA,stringB].map(title=>title.split(/[\s\-Xx]+/).map(word=>(word.replace(regex, ''))));
         const rate = xlsxTitleTokenized.reduce((acc,word)=>{
             if(titleTokenized.includes(word) && word !== '') acc++;
             return acc;
@@ -19,7 +19,6 @@ const compareTitles = ({xlsxTitle,cbTitle})=>{
     })
 
     const rate = rateNumbers*0.25+rateWords*0.15+rateNumbersAndWords*0.3+similaryRate*0.3
-    console.log(rate)
     return {rate};
 }
 
@@ -42,7 +41,8 @@ onmessage = (event)=>{
     const discoverProducts = ()=>{
         const {xlsxItems,products} = attach;
         
-        // compareTitles({xlsxTitle:'hola',cbTitle:'hola'})
+        console.log(compareTitles({stringA:'hola como estas',stringB:'hola'}))
+        console.log(compareTitles({stringA:'hola',stringB:'hola como estas'}))
 
         self.postMessage({task,attach:{}});
 
